@@ -7,7 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1qCcaF9bQsYaxNmMRFKB0zdvBiJO_0F6M
 """
 
-!pip install dash pandas plotly geopandas numpy requests gdown pyheif Pillow piexif exifread google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client --quiet
 import dash
 from dash import dcc, html, callback_context
 from dash.dependencies import Input, Output, State

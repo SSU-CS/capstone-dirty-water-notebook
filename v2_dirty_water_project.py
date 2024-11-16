@@ -67,14 +67,14 @@ site_image_folder = '15KYKPPqCu_omQULWwbLpwJoPLzkuTFQE'
 
 # Download Santa Rosa Creek GeoJSON
 file_id = '1mDhGKaYsRv0Z8pGOVsxYKMmqIvNDhcMr'  # Google Drive file ID
-output_geojson = 'SantaRosaCreek.geojson'
+output_geojson = '/tmp/SantaRosaCreek.geojson'
 download_file(file_id, output_geojson)
+srcreek_gdf = gpd.read_file(output_geojson)
 
 # Download Rain Data CSV
 file_id = '1-4qXImfpTR2R_yRSVCOQAWYbZxRAvGMD'
-output_rain_data = 'santa_rosa_rain_data.csv'
+output_rain_data = '/tmp/santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
-
 cached_rain_data = pd.read_csv(output_rain_data)
 
 # Create the session assets folder
@@ -925,3 +925,6 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
 
 
 app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+
+tmp_files = os.listdir('/tmp')
+print(tmp_files)

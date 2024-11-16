@@ -62,7 +62,6 @@ encampments_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvO
 encampments = pd.read_csv(encampments_link)
 
 # Define paths
-rain_data_path = 'santa_rosa_rain_data.csv'
 rain_gauge_folder = '1-W15wK6X11Nbt2eRLS7kYb6i-H5u5GGY'
 site_image_folder = '15KYKPPqCu_omQULWwbLpwJoPLzkuTFQE'
 
@@ -85,20 +84,23 @@ os.makedirs(assets_folder, exist_ok=True)
 # Download the rain gauge images (use Drive API to list files)
 rain_gauges = service.files().list(q=f"'{rain_gauge_folder}' in parents").execute()['files']
 
-for file in rain_gauges:
-    file_name = file['name']
-    source_file = os.path.join(rain_gauge_folder, file_name)
-    destination_file = os.path.join(assets_folder, f"rain_figure_{file_name}")
-    download_file(file['id'], destination_file)
+def download_images():
+    # Create the session assets folder
+    assets_folder = '/tmp/assets'
+    os.makedirs(assets_folder, exist_ok=True)
+    for file in rain_gauges:
+        file_name = file['name']
+        source_file = os.path.join(rain_gauge_folder, file_name)
+        destination_file = os.path.join(assets_folder, f"rain_figure_{file_name}")
+        download_file(file['id'], destination_file)
+    for file in site_images:
+        file_name = file['name']
+        source_file = os.path.join(site_image_folder, file_name)
+        destination_file = os.path.join(assets_folder, f"site_image_{file_name}.jpeg")
+        download_file(file['id'], destination_file)
 
 # Download the sample site images (use Drive API to list files)
 site_images = service.files().list(q=f"'{site_image_folder}' in parents").execute()['files']
-
-for file in site_images:
-    file_name = file['name']
-    source_file = os.path.join(site_image_folder, file_name)
-    destination_file = os.path.join(assets_folder, f"site_image_{file_name}.jpeg")
-    download_file(file['id'], destination_file)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries
@@ -297,6 +299,8 @@ generate_rain_figures()
 # Create a Dash app
 app = dash.Dash(__name__)
 server = app.server
+download_images()
+
 @app.server.route('/assets/<path:path>')
 
 def serve_static(path):
@@ -745,7 +749,7 @@ def show_site_image_on_click(click):
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
             if file_name in os.listdir('/tmp/assets'):
                 return f"/assets/{file_name}", file_name, f"Data Collected at {site_name}"
-    return None, '', f'Click on a site on the map to display data. {os.listdir("/tmp/assets")}'
+    return None, '', f'Click on a site on the map to display data. {os.listdir("/tmp/assets"), rain_gauges}'
 
 # Callback to update the map when the slider value changes
 @app.callback(

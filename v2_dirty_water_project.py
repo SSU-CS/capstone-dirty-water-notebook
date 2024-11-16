@@ -266,7 +266,7 @@ def generate_rain_figures():
 
     for sample_date, rain_df in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
-      rain_figures[sample_date] = f'/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
+      rain_figures[sample_date] = f'/tmp/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
     return ((lat1 - lat2)**2 + (lon1 - lon2)**2)**0.5
@@ -738,8 +738,8 @@ def show_site_image_on_click(click):
             site_name = point['customdata'][0]
             sample_date = point['customdata'][1].split('T')[0]
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
-            if file_name in os.listdir('/content/assets'):
-                return f"/assets/{file_name}", file_name, f"Data Collected at {site_name}"
+            if file_name in os.listdir('/tmp/assets'):
+                return f"/tmp/assets/{file_name}", file_name, f"Data Collected at {site_name}"
     return None, '', 'Click on a site on the map to display data.'
 
 # Callback to update the map when the slider value changes

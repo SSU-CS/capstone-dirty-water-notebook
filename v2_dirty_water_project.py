@@ -62,8 +62,8 @@ encampments = pd.read_csv(encampments_link)
 
 # Define paths
 rain_data_path = 'santa_rosa_rain_data.csv'
-rain_gauge_folder = '/content/drive/Shareddrives/SSU dirty-water/Rain Gauge Images/'
-site_image_folder = '/content/drive/Shareddrives/SSU dirty-water/Sample Site Images/'
+rain_gauge_folder = '1-W15wK6X11Nbt2eRLS7kYb6i-H5u5GGY'
+site_image_folder = '15KYKPPqCu_omQULWwbLpwJoPLzkuTFQE'
 
 # Download Santa Rosa Creek GeoJSON
 file_id = '1mDhGKaYsRv0Z8pGOVsxYKMmqIvNDhcMr'  # Google Drive file ID
@@ -76,7 +76,7 @@ output_rain_data = 'santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
 
 # Create the session assets folder
-assets_folder = '/content/assets'
+assets_folder = '/tmp/assets'
 os.makedirs(assets_folder, exist_ok=True)
 
 # Download the rain gauge images (use Drive API to list files)

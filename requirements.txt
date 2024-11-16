@@ -1,5 +1,6 @@
 gunicorn
 dash
+Flask
 pandas
 plotly
 geopandas

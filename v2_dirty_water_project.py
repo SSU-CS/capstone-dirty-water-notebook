@@ -83,7 +83,7 @@ os.makedirs(assets_folder, exist_ok=True)
 
 # Download the rain gauge images (use Drive API to list files)
 rain_gauges = service.files().list(q=f"'{rain_gauge_folder}' in parents").execute()['files']
-rain_gauge_response = service.files().list(q=query).execute()
+rain_gauge_response = service.files().list(q='').execute()
 
 def download_images():
     # Create the session assets folder

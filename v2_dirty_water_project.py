@@ -32,6 +32,7 @@ import piexif
 import exifread
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
+from flask import send_from_directory
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -266,7 +267,7 @@ def generate_rain_figures():
 
     for sample_date, rain_df in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
-      rain_figures[sample_date] = f'/tmp/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
+      rain_figures[sample_date] = f'/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
     return ((lat1 - lat2)**2 + (lon1 - lon2)**2)**0.5
@@ -296,6 +297,10 @@ generate_rain_figures()
 # Create a Dash app
 app = dash.Dash(__name__)
 server = app.server
+@app.server.route('/assets/<path:path>')
+
+def serve_static(path):
+    return send_from_directory('/tmp/assets', path)
 
 color_dict = {
     0: 'rgba(255, 255, 255, .5)',  # No homeless
@@ -739,7 +744,7 @@ def show_site_image_on_click(click):
             sample_date = point['customdata'][1].split('T')[0]
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
             if file_name in os.listdir('/tmp/assets'):
-                return f"/tmp/assets/{file_name}", file_name, f"Data Collected at {site_name}"
+                return f"/assets/{file_name}", file_name, f"Data Collected at {site_name}"
     return None, '', 'Click on a site on the map to display data.'
 
 # Callback to update the map when the slider value changes
@@ -925,6 +930,3 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
 
 
 app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-
-tmp_files = os.listdir('/tmp')
-print(tmp_files)

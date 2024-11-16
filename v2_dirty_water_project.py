@@ -31,6 +31,7 @@ from PIL import Image
 import piexif
 import exifread
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 

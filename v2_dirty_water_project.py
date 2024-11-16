@@ -83,6 +83,7 @@ os.makedirs(assets_folder, exist_ok=True)
 
 # Download the rain gauge images (use Drive API to list files)
 rain_gauges = service.files().list(q=f"'{rain_gauge_folder}' in parents").execute()['files']
+rain_gauge_response = service.files().list(q=f"'{rain_gauge_folder}' in parents").execute()
 
 def download_images():
     # Create the session assets folder
@@ -749,7 +750,7 @@ def show_site_image_on_click(click):
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
             if file_name in os.listdir('/tmp/assets'):
                 return f"/assets/{file_name}", file_name, f"Data Collected at {site_name}"
-    return None, '', f'Click on a site on the map to display data. {os.listdir("/tmp/assets"), rain_gauges}'
+    return None, '', f'Click on a site on the map to display data. {os.listdir("/tmp/assets"), rain_gauges, rain_gauge_response}'
 
 # Callback to update the map when the slider value changes
 @app.callback(

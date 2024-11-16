@@ -923,4 +923,4 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
     return fig, lat_lon, zoom_level
 
 
-app.run_server(mode='inline', debug=True)
+app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

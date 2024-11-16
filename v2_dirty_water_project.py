@@ -75,6 +75,8 @@ file_id = '1-4qXImfpTR2R_yRSVCOQAWYbZxRAvGMD'
 output_rain_data = 'santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
 
+cached_rain_data = pd.read_csv(output_rain_data)
+
 # Create the session assets folder
 assets_folder = '/tmp/assets'
 os.makedirs(assets_folder, exist_ok=True)
@@ -253,7 +255,6 @@ def update_rain_data():
           updated_rain_data = pd.concat([updated_rain_data, new_data], axis=0)
       start_date = end_date
 
-    updated_rain_data[['date', 'datatype', 'station', 'value']].to_csv(rain_data_path, index = False)
     return updated_rain_data
 
 def generate_rain_figures():

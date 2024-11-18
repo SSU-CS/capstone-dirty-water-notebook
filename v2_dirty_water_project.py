@@ -87,6 +87,7 @@ assets_folder = '/tmp/assets'
 os.makedirs(assets_folder, exist_ok=True)
 
 def download_images():
+    os.makedirs(assets_folder, exist_ok=True)
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']

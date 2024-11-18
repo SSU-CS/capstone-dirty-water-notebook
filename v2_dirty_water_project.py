@@ -256,7 +256,7 @@ def generate_rain_figures():
 
     for sample_date, rain_df in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
-      rain_figures[sample_date] = f'/tmp/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
+      rain_figures[sample_date] = f'rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
     return ((lat1 - lat2)**2 + (lon1 - lon2)**2)**0.5

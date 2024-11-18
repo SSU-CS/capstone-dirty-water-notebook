@@ -61,9 +61,14 @@ samples = pd.read_csv(samples_link)
 encampments_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvOntjGpzFbpai7tfGCE4atG7cre5BiG_CEhMQw7cOo6bz-SmgJRY7rGCP7ERnRywkwiw7/pub?gid=1918593179&single=true&output=csv'
 encampments = pd.read_csv(encampments_link)
 
-# Define paths
-rain_gauge_folder = '1-W15wK6X11Nbt2eRLS7kYb6i-H5u5GGY'
-site_image_folder = '15KYKPPqCu_omQULWwbLpwJoPLzkuTFQE'
+# Download .csv containing the FileIDs of all Rain Gauge images
+file_id = '1-2dUhmLQ2ZuPjKujhT0jk9VeIngFW7Qa'
+output_rain_gauges = '/tmp/rain_gauges.csv'
+download_file(file_id, output_rain_gauges)
+rain_gauge_list = pd.read_csv(output_rain_gauges)
+
+# site_images_link = ''
+# site_image_list = pd.read_csv()
 
 # Download Santa Rosa Creek GeoJSON
 file_id = '1mDhGKaYsRv0Z8pGOVsxYKMmqIvNDhcMr'  # Google Drive file ID
@@ -81,27 +86,11 @@ cached_rain_data = pd.read_csv(output_rain_data)
 assets_folder = '/tmp/assets'
 os.makedirs(assets_folder, exist_ok=True)
 
-# Download the rain gauge images (use Drive API to list files)
-rain_gauges = service.files().list(q=f"'{rain_gauge_folder}' in parents").execute()['files']
-rain_gauge_response = service.files().list(q='').execute()
-
 def download_images():
-    # Create the session assets folder
-    assets_folder = '/tmp/assets'
-    os.makedirs(assets_folder, exist_ok=True)
-    for file in rain_gauges:
-        file_name = file['name']
+    for i, file in rain_gauges.iterrows():
+        file_name = file['file_name']
         source_file = os.path.join(rain_gauge_folder, file_name)
         destination_file = os.path.join(assets_folder, f"rain_figure_{file_name}")
-        download_file(file['id'], destination_file)
-    for file in site_images:
-        file_name = file['name']
-        source_file = os.path.join(site_image_folder, file_name)
-        destination_file = os.path.join(assets_folder, f"site_image_{file_name}.jpeg")
-        download_file(file['id'], destination_file)
-
-# Download the sample site images (use Drive API to list files)
-site_images = service.files().list(q=f"'{site_image_folder}' in parents").execute()['files']
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries

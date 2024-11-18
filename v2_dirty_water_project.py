@@ -88,7 +88,7 @@ def download_images():
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
-        output_rain_figures = f'/assets/rain_figure_{file_name}'
+        output_rain_figures = f'assets/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
 
 def dms_to_dd(dms):

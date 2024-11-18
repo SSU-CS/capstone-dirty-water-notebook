@@ -82,16 +82,11 @@ output_rain_data = '/tmp/santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
 cached_rain_data = pd.read_csv(output_rain_data)
 
-# Create the session assets folder
-assets_folder = '/tmp/assets'
-os.makedirs(assets_folder, exist_ok=True)
-
 def download_images():
-    os.makedirs(assets_folder, exist_ok=True)
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
-        output_rain_figures = f'/tmp/assets/rain_figure_{file_name}'
+        output_rain_figures = f'/tmp/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
 
 def dms_to_dd(dms):
@@ -261,7 +256,7 @@ def generate_rain_figures():
 
     for sample_date, rain_df in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
-      rain_figures[sample_date] = f'/tmp/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
+      rain_figures[sample_date] = f'/tmp/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
 
 def euclidean_distance(lat1, lon1, lat2, lon2):
     return ((lat1 - lat2)**2 + (lon1 - lon2)**2)**0.5
@@ -292,11 +287,6 @@ generate_rain_figures()
 app = dash.Dash(__name__)
 server = app.server
 download_images()
-
-@app.server.route('/assets/<path:path>')
-
-def serve_static(path):
-    return send_from_directory('/tmp/assets', path)
 
 color_dict = {
     0: 'rgba(255, 255, 255, .5)',  # No homeless
@@ -739,8 +729,8 @@ def show_site_image_on_click(click):
             site_name = point['customdata'][0]
             sample_date = point['customdata'][1].split('T')[0]
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
-            if file_name in os.listdir('/tmp/assets'):
-                return f"/assets/{file_name}", file_name, f"Data Collected at {site_name}"
+            if file_name in os.listdir('/tmp'):
+                return f"/tmp/{file_name}", file_name, f"Data Collected at {site_name}"
     return None, '', f'Click on a site on the map to display data.'
 
 # Callback to update the map when the slider value changes

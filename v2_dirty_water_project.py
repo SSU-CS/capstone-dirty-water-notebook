@@ -82,13 +82,13 @@ output_rain_data = '/tmp/santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
 cached_rain_data = pd.read_csv(output_rain_data)
 
-os.makedirs('/tmp/assets', exist_ok = True)
+os.makedirs('/assets', exist_ok = True)
 
 def download_images():
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
-        output_rain_figures = f'/tmp/assets/rain_figure_{file_name}'
+        output_rain_figures = f'/assets/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
 
 def dms_to_dd(dms):

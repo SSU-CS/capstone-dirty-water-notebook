@@ -286,7 +286,7 @@ rain_figures = {}
 generate_rain_figures()
 
 # Create a Dash app
-app = dash.Dash(__name__, static_folder='/tmp/assets')
+app = dash.Dash(__name__)
 server = app.server
 download_images()
 

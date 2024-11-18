@@ -82,11 +82,13 @@ output_rain_data = '/tmp/santa_rosa_rain_data.csv'
 download_file(file_id, output_rain_data)
 cached_rain_data = pd.read_csv(output_rain_data)
 
+os.makedirs('/tmp/assets', exist_ok = True)
+
 def download_images():
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
-        output_rain_figures = f'/tmp/rain_figure_{file_name}'
+        output_rain_figures = f'/tmp/assets/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
 
 def dms_to_dd(dms):
@@ -731,7 +733,7 @@ def show_site_image_on_click(click):
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
             if file_name in os.listdir('/tmp'):
                 return f"/tmp/{file_name}", file_name, f"Data Collected at {site_name}"
-    x = os.listdir('/tmp')
+    x = os.listdir('/tmp/assets')
     return None, '', f'{x}'
 
 # Callback to update the map when the slider value changes

@@ -87,7 +87,7 @@ assets_folder = '/tmp/assets'
 os.makedirs(assets_folder, exist_ok=True)
 
 def download_images():
-    for i, file in rain_gauges_list.iterrows():
+    for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         source_file = os.path.join(rain_gauge_folder, file_name)
         destination_file = os.path.join(assets_folder, f"rain_figure_{file_name}")

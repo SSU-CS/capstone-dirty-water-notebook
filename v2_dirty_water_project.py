@@ -286,7 +286,7 @@ rain_figures = {}
 generate_rain_figures()
 
 # Create a Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, static_folder='/tmp/assets')
 server = app.server
 download_images()
 
@@ -734,7 +734,8 @@ def show_site_image_on_click(click):
             if file_name in os.listdir('/tmp'):
                 return f"/tmp/{file_name}", file_name, f"Data Collected at {site_name}"
     x = os.listdir('/tmp/assets')
-    return None, '', f'{x}'
+    y = os.getcwd()
+    return None, '', f'{x, y}'
 
 # Callback to update the map when the slider value changes
 @app.callback(

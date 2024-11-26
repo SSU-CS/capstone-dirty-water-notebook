@@ -348,6 +348,18 @@ app.layout = html.Div([
     dcc.Interval(id='interval-component', interval=10 * 1000, max_intervals=0),
     html.Div([
         html.Div([
+          html.Div(id='date-indicator',
+                children=['Sample Date:'],
+                style={
+                  'backgroundColor': '#1976D2',
+                  'borderRadius': '5px',
+                  'padding': '4px 4px',
+                  'fontSize': '16px',
+                  'color': 'white',
+                  'textAlign': 'center',
+                  'fontWeight': 'bold',
+                  'fontFamily': 'Helvetica'
+              }),
             dcc.Graph(id='map', style={'width': '100%', 'height': '500px'}),
             dcc.Markdown(id='debug-output', style={'whiteSpace': 'pre-line'}),
             dcc.Store(id='zoom-level', data=12),
@@ -554,17 +566,18 @@ def update_slider(n_intervals, current_value):
     else:
         return current_value  # keep current value
 
-# Define the callback to update the rain gauge image
+# Define the callback to update the rain gauge image and date indicator
 @app.callback(
     Output('rain-gauge', 'src'),
+    Output('date-indicator', 'children'),
     Input('date-slider', 'value')
 )
-def update_rain_gauge(selected_date_index):
+def update_rain_gauge_and_date_indicator(selected_date_index):
     sample_date = unique_dates[selected_date_index]
     image_path = rain_figures.get(pd.Timestamp(sample_date))
     if image_path:
-        return image_path
-    return None
+        return image_path, f"Sample Date: {sample_date.strftime('%Y-%m-%d')}"
+    return None, f"Sample Date: {sample_date.strftime('%Y-%m-%d')}"
 
 # Define the callback to update the date-specific graphs
 @app.callback(

@@ -750,7 +750,7 @@ def show_site_image_on_click(click):
             file_name = f"site_image_{site_name}_{sample_date}.jpeg"
             if file_name in os.listdir('/tmp'):
                 return f"/tmp/{file_name}", file_name, f"Data Collected at {site_name}"
-    return None, '', 'No data for selected site.'
+    return None, '', 'No data for selected site'
 
 # Callback to update the map when the slider value changes
 @app.callback(

@@ -30,6 +30,7 @@ import pyheif
 from PIL import Image
 import piexif
 import exifread
+from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from flask import send_from_directory
@@ -67,20 +68,16 @@ output_rain_gauges = '/tmp/rain_gauges.csv'
 download_file(file_id, output_rain_gauges)
 rain_gauge_list = pd.read_csv(output_rain_gauges)
 
-# site_images_link = ''
-# site_image_list = pd.read_csv()
+file_id = '1AjVURDitIpEtvEgGCAUiiIt6066jYEsD'
+output_site_images = '/tmp/site_images.csv'
+download_file(file_id, output_site_images)
+site_image_list = pd.read_csv(output_site_images)
 
 # Download Santa Rosa Creek GeoJSON
 file_id = '1mDhGKaYsRv0Z8pGOVsxYKMmqIvNDhcMr'  # Google Drive file ID
 output_geojson = '/tmp/SantaRosaCreek.geojson'
 download_file(file_id, output_geojson)
 srcreek_gdf = gpd.read_file(output_geojson)
-
-# Download Rain Data CSV
-file_id = '1-4qXImfpTR2R_yRSVCOQAWYbZxRAvGMD'
-output_rain_data = '/tmp/santa_rosa_rain_data.csv'
-download_file(file_id, output_rain_data)
-cached_rain_data = pd.read_csv(output_rain_data)
 
 os.makedirs('assets', exist_ok = True)
 
@@ -90,6 +87,11 @@ def download_images():
         file_id = file['file_id']
         output_rain_figures = f'assets/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
+    for i, file in site_image_list.iterrows():
+        file_name = file['file_name']
+        file_id = file['file_id']
+        output_site_images = f'assets/site_image_{file_name}'
+        download_file(file_id, output_site_images)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries
@@ -167,95 +169,7 @@ min_date = min(unique_dates)
 max_date = max(unique_dates)
 date_range = pd.date_range(min_date, max_date)
 
-def send_NOAA_request(start_date, end_date):
-    # NOAA API
-    url = "https://www.ncei.noaa.gov/cdo-web/api/v2/data"
-
-    # NOAA CDO API Token
-    NOAA_TOKEN = os.getenv('CDO_API_TOKEN')
-
-    # Define parameters for the GET request
-    # Using Data Station: GHCND:USW00023213
-    params = {
-        "datasetid": "GHCND",               # Daily summaries dataset
-        "datatypeid": "PRCP",               # Precipitation data type
-        "stationid": "GHCND:USW00094728",
-        "startdate": start_date.strftime('%Y-%m-%d'),
-        "enddate": end_date.strftime('%Y-%m-%d'),
-        "units": "standard",                # Precipitation in inches
-        "limit": 1000,                      # Number of results to return (max 1000 per request)
-        "format": "json"
-    }
-
-    # Headers for the GET request (include the API token)
-    headers = {
-        "token": NOAA_TOKEN
-    }
-
-    # Send the GET request
-    try:
-      response = requests.get(url, headers=headers, params=params, timeout=10)
-    except:
-      # Prevents request from hanging indefinitely
-      print("Request timed out.")
-      return None
-
-    # Check if the request was successful
-    if response.status_code == 200:
-      try:
-        rain_data = response.json()
-        if 'results' in rain_data:
-          results = rain_data['results']
-          return pd.DataFrame(results)
-        else:
-          print("No results found in the response.")
-          return None
-      except ValueError:
-        print("Failed to parse JSON response.")
-        return None
-    else:
-      # If the request fails, print the status code and error message
-      print(f"Failed to retrieve data. Status code: {response.status_code}")
-      print(f"Error message: {response.text}")
-      return None
-
-def update_rain_data():
-    if 'date' in cached_rain_data.columns:
-        cached_rain_data['date'] = pd.to_datetime(cached_rain_data['date'], format='ISO8601')
-        last_saved_date = cached_rain_data['date'].max()
-    else:
-        last_saved_date = min_date - pd.Timedelta(days=1)
-
-    start_date = last_saved_date
-    end_date = start_date
-    updated_rain_data = cached_rain_data     # Preparing for dataset concatenation
-    today = pd.Timestamp.today().normalize()
-    if end_date == today:
-        return updated_rain_data
-
-    while end_date != today:
-      start_date = start_date + pd.Timedelta(days=1)
-      end_date = start_date + pd.DateOffset(years=1)
-      if end_date > today:
-          end_date = today
-      print(f"Fetching data for [{start_date}, {end_date}]")
-      new_data = send_NOAA_request(start_date, end_date)
-      if new_data is None:
-          print("Failed to retrieve data.")
-          break
-      else:
-          updated_rain_data = pd.concat([updated_rain_data, new_data], axis=0)
-      start_date = end_date
-
-    return updated_rain_data
-
 def generate_rain_figures():
-    for sample_date in unique_dates:
-      # Get the rain data from the past week before sample date
-      one_week_prior = sample_date - pd.Timedelta(days = 7)
-      df = cached_rain_data[(cached_rain_data['date'] >=  one_week_prior) & (cached_rain_data['date'] <= sample_date)]
-      rain_figures[sample_date] = df
-
     for sample_date, rain_df in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
       rain_figures[sample_date] = f'/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
@@ -279,8 +193,6 @@ def find_closest_site(lat, lon, sample_sites_dict):
 
     return closest_site
 
-cached_rain_data = update_rain_data()
-cached_rain_data['date'] = pd.to_datetime(cached_rain_data['date'], format='ISO8601')
 rain_figures = {}
 
 generate_rain_figures()
@@ -487,6 +399,7 @@ app.layout = html.Div([
                                 'fontWeight': 'bold',
                                 'fontFamily': 'Helvetica'
                             }),
+                            html.Div(id='date-image-list', style={'height': '500px', 'overflow-y': 'scroll'}),
                             html.Div(
                                 children=[
                                     html.Img(
@@ -736,21 +649,54 @@ for param, mapping in color_mapping.items():
         color_ranges[param].append((color, description))
 
 @app.callback(
-    [Output('image', 'src'),
-     Output('debug-output', 'children'),
-     Output('site-info-display', 'children')],
+    [Output('site-info-display', 'children'),
+     Output('date-image-list', 'children'),
+     Output('debug-output', 'children')],
     [Input('map', 'clickData')]
 )
 def show_site_image_on_click(click):
-    if click:
-        point = click['points'][0]
-        if 'customdata' in point and point['customdata']:
-            site_name = point['customdata'][0]
-            sample_date = point['customdata'][1].split('T')[0]
-            file_name = f"site_image_{site_name}_{sample_date}.jpeg"
-            if file_name in os.listdir('/tmp'):
-                return f"/tmp/{file_name}", file_name, f"Data Collected at {site_name}"
-    return None, '', 'No data for selected site'
+    if not click:
+        return 'Click on a site on the map to display data.', '', ''
+    point = click['points'][0]
+    if 'customdata' in point and point['customdata']:
+        site_name = point['customdata'][0]  # Get SiteName from the customdata
+
+        # Collect all image paths for the site
+        image_dir = '/assets'
+        all_images = [img for img in os.listdir(image_dir) if img.startswith(f"site_image_{site_name}")]
+
+        # Group images by date
+        images_by_date = {}
+        for img_path in all_images:
+            try:
+                parts = img_path.split('_')
+                if len(parts) >= 4:
+                    date_str = parts[3]
+                    img_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+                    if img_date not in images_by_date:
+                        images_by_date[img_date] = []
+                    images_by_date[img_date].append(img_path)
+                else:
+                    raise ValueError(f"Invalid filename pattern: {img_path}")
+            except Exception as e:
+                print(f"Error parsing date for image: {img_path}. Error: {e}")
+
+        sorted_dates = sorted(images_by_date.keys(), reverse=True)
+
+        # Generate the children for the images
+        children = []
+        for img_date in sorted_dates:
+            date_section = [html.H4(f"Date: {img_date}", style={'font-family': 'Helvetica, sans-serif'})]
+            date_section += [
+                html.Img(src=f"/assets/{img}", style={'width': '95%', 'margin-bottom': '4px', 'object-fit': 'contain'})
+                for img in images_by_date[img_date]
+            ]
+            children.append(html.Div(date_section, style={'margin-bottom': '0px'}))
+
+        return f"Sample Site: {site_name}", children, f"Displaying {len(all_images)} images for {site_name}, {children, sorted_dates, all_images}"#, None
+
+    return 'Click on a site on the map to display data.', '', ''
 
 # Callback to update the map when the slider value changes
 @app.callback(

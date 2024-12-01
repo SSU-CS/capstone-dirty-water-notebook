@@ -62,7 +62,7 @@ encampments_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvO
 encampments = pd.read_csv(encampments_link)
 
 # Download .csv containing the FileIDs of all Rain Gauge images
-file_id = '1-2dUhmLQ2ZuPjKujhT0jk9VeIngFW7Qa'
+file_id = '1WVTaG09ItaHNaPB25UE1ns6O83w9tJA_9K2lmO8UsBQ'
 output_rain_gauges = '/tmp/rain_gauges.csv'
 download_file(file_id, output_rain_gauges)
 rain_gauge_list = pd.read_csv(output_rain_gauges)
@@ -638,7 +638,7 @@ def get_even_colors(palette, palette_type, num_colors):
         palette_colors = palette_colors[2:] # Exclude the first 2 colors in palette, since they are often too light to show up on background
     elif palette_type == 'diverging':
         palette_colors = getattr(plotly.colors.diverging, palette)
-        if (len(palette) % 2 == 1) and palette == 'RdYlBu':  # Chaning middle color since default is too light to see
+        if palette == 'RdYlBu':  # Chaning middle color since default is too light to see
             # It was requested that the midpoint color for the divinging palette "RdYlBl" be changed to a darker yellow
             mid_index = len(palette_colors) // 2
             palette_colors[mid_index] = '#DAA520'

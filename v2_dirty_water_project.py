@@ -637,16 +637,16 @@ def get_even_colors(palette, palette_type, num_colors):
         palette = getattr(plotly.colors.sequential, palette)
         palette = palette[2:] # Exclude the first 2 colors in palette, since they are often too light to show up on background
     elif palette_type == 'diverging':
-        palette = getattr(plotly.colors.diverging, palette)
+        palette_colors = getattr(plotly.colors.diverging, palette)
         if (len(palette) % 2 == 1) and palette == 'RdYlBu':  # Chaning middle color since default is too light to see
             # It was requested that the midpoint color for the divinging palette "RdYlBl" be changed to a darker yellow
-            mid_index = len(palette) // 2
-            palette[mid_index] = '#DAA520'
+            mid_index = len(palette_colors) // 2
+            palette_colors[mid_index] = '#DAA520'
     else:
         raise ValueError(f"Palette type '{palette_type}' is not recognized")
     # Calculate evenly spaced indices
-    indices = [int(i * (len(palette) - 1) / (num_colors - 1)) for i in range(num_colors)]
-    return ['rgba(0, 0, 0, 0.62)'] + [palette[i] for i in indices]
+    indices = [int(i * (len(palette_colors) - 1) / (num_colors - 1)) for i in range(num_colors)]
+    return ['rgba(0, 0, 0, 0.62)'] + [palette_colors[i] for i in indices]
 
 # Setup color mapping for sample points
 color_mapping = {

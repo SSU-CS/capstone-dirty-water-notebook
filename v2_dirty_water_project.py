@@ -638,6 +638,10 @@ def get_even_colors(palette, palette_type, num_colors):
         palette = palette[2:] # Exclude the first 2 colors in palette, since they are often too light to show up on background
     elif palette_type == 'diverging':
         palette = getattr(plotly.colors.diverging, palette)
+        if (len(palette) % 2 == 1) and palette == 'RdYlBu':  # Chaning middle color since default is too light to see
+            # It was requested that the midpoint color for the divinging palette "RdYlBl" be changed to a darker yellow
+            mid_index = len(palette) // 2
+            palette[mid_index] = '#DAA520'
     else:
         raise ValueError(f"Palette type '{palette_type}' is not recognized")
     # Calculate evenly spaced indices
@@ -655,8 +659,8 @@ color_mapping = {
     'DO(mg/L)': {
         'ranges': [0, 5, 6],
         'ranges_descr': ['No Data', '0-5 Very low', '5-6 Low', '>6 Ideal'],
-        'colors': 'YlOrRd_r',
-        'palette': 'sequential'
+        'colors': 'RdYlBu',
+        'palette': 'diverging'
     },
     'Conductivity(us/cm)': {
         'ranges': [0, 200, 400, 600, 800],

@@ -634,8 +634,8 @@ def get_even_colors(palette, palette_type, num_colors):
     num_colors -= 1 # This accounts for "No Data" color, which is a transparent black
     # Sample num_colors evenly spaced colors from the given palette.
     if palette_type == 'sequential':
-        palette = getattr(plotly.colors.sequential, palette)
-        palette = palette[2:] # Exclude the first 2 colors in palette, since they are often too light to show up on background
+        palette_colors = getattr(plotly.colors.sequential, palette)
+        palette_colors = palette_colors[2:] # Exclude the first 2 colors in palette, since they are often too light to show up on background
     elif palette_type == 'diverging':
         palette_colors = getattr(plotly.colors.diverging, palette)
         if (len(palette) % 2 == 1) and palette == 'RdYlBu':  # Chaning middle color since default is too light to see

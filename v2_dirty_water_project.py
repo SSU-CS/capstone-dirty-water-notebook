@@ -170,7 +170,9 @@ max_date = max(unique_dates)
 date_range = pd.date_range(min_date, max_date)
 
 def generate_rain_figures():
-    for sample_date, rain_df in rain_figures.items():
+    for sample_date in unique_dates:
+        rain_figures[sample_date] = ''
+    for sample_date, _ in rain_figures.items():
       # Update the rain_figures dictionary with the path to the figure
       rain_figures[sample_date] = f'/assets/rain_figure_{sample_date.strftime("%Y-%m-%d")}.png'
 

@@ -13,6 +13,7 @@ piexif
 exifread
 seaborn
 matplotlib
+datetime
 google-auth
 google-auth-oauthlib
 google-auth-httplib2

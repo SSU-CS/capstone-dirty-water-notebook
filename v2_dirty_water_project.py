@@ -62,7 +62,7 @@ encampments_link = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9KmvTArEvO
 encampments = pd.read_csv(encampments_link)
 
 # Download .csv containing the FileIDs of all Rain Gauge images
-file_id = '1WVTaG09ItaHNaPB25UE1ns6O83w9tJA_9K2lmO8UsBQ'
+file_id = '1-W15wK6X11Nbt2eRLS7kYb6i-H5u5GGY'
 output_rain_gauges = '/tmp/rain_gauges.csv'
 download_file(file_id, output_rain_gauges)
 rain_gauge_list = pd.read_csv(output_rain_gauges)

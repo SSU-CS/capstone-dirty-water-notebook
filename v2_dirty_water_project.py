@@ -671,7 +671,8 @@ def show_site_image_on_click(click):
 
         # Collect all image paths for the site
         image_dir = 'assets/'
-        all_images = [img for img in os.listdir(image_dir) if img.startswith(f"site_image_{site_name}")]
+        all_images = [img for img in os.listdir(image_dir) if f"site_image_{site_name}_" in img]
+
 
         # Group images by date
         images_by_date = {}

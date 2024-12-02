@@ -14,7 +14,7 @@ exifread
 seaborn
 matplotlib
 datetime
-time
+asyncio
 google-auth
 google-auth-oauthlib
 google-auth-httplib2

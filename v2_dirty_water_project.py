@@ -697,7 +697,7 @@ def show_site_image_on_click(click):
             children.append(html.Div(date_section, style={'margin-bottom': '0px'}))
         children.append(html.Div('', style={'margin-bottom': '0px'}))
 
-        return f"Sample Site: {site_name}", children, f"Displaying {len(all_images)} images for {site_name}, {children, sorted_dates, all_images}"
+        return f"Sample Site: {site_name}", children, ''
 
     return 'Click on a site on the map to display data.', '', ''
 

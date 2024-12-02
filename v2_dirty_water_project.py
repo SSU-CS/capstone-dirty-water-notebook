@@ -207,7 +207,8 @@ generate_rain_figures()
 # Create a Dash app
 app = dash.Dash(__name__)
 server = app.server
-download_images()
+# download_images()
+asyncio.run(download_images())
 
 color_dict = {
     0: 'rgba(255, 255, 255, .5)',  # No homeless

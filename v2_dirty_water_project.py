@@ -664,7 +664,7 @@ def show_site_image_on_click(click):
         site_name = point['customdata'][0]  # Get SiteName from the customdata
 
         # Collect all image paths for the site
-        image_dir = '/assets/'
+        image_dir = 'assets/'
         all_images = [img for img in os.listdir(image_dir) if img.startswith(f"site_image_{site_name}")]
 
         # Group images by date

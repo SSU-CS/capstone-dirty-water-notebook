@@ -31,6 +31,7 @@ from PIL import Image
 import piexif
 import exifread
 from datetime import datetime
+import time
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from flask import send_from_directory
@@ -87,11 +88,13 @@ def download_images():
         file_id = file['file_id']
         output_rain_figures = f'assets/rain_figure_{file_name}'
         download_file(file_id, output_rain_figures)
-    # for i, file in site_image_list.iterrows():
-    #     file_name = file['file_name']
-    #     file_id = file['file_id']
-    #     output_site_images = f'assets/site_image_{file_name}'
-    #     download_file(file_id, output_site_images)
+        time.sleep(1)
+    for i, file in site_image_list.iterrows():
+        file_name = file['file_name']
+        file_id = file['file_id']
+        output_site_images = f'assets/site_image_{file_name}'
+        download_file(file_id, output_site_images)
+        time.sleep(1)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries

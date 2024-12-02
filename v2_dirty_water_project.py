@@ -31,7 +31,7 @@ from PIL import Image
 import piexif
 import exifread
 from datetime import datetime
-import time
+import asyncio
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from flask import send_from_directory
@@ -82,19 +82,21 @@ srcreek_gdf = gpd.read_file(output_geojson)
 
 os.makedirs('assets', exist_ok = True)
 
-def download_images():
+async def download_images():
     for i, file in rain_gauge_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
         output_rain_figures = f'assets/rain_figure_{file_name}'
-        download_file(file_id, output_rain_figures)
-        time.sleep(1)
+        # download_file(file_id, output_rain_figures)
+        await asyncio.to_thread(download_file, file_id, output_rain_figures)
+        await asyncio.sleep(1)
     for i, file in site_image_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
         output_site_images = f'assets/site_image_{file_name}'
-        download_file(file_id, output_site_images)
-        time.sleep(1)
+        # download_file(file_id, output_site_images)
+        await asyncio.to_thread(download_file, file_id, output_site_images)
+        await asyncio.sleep(1)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries

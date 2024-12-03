@@ -156,7 +156,7 @@ for site in merged_encampments['EncampmentSite'].unique():
 
 
 # List of columns to clean
-columns_to_clean = ["pH", "TEMP", "DO(mg/L)", "Conductivity(us/cm)", "Ecoli (MPN/100mL)", "Enterococcus", "D.O%", "Phosphorus"]
+columns_to_clean = ["pH", "TEMP", "DO(mg/L)", "Conductivity(us/cm)", "Ecoli (MPN/100mL)", "Enterococcus", "D.O%", "Phosphorus", "HF183 (MPN/100mL)"]
 
 # Accounts for 'ND' and '>' in numeric fields
 for column in columns_to_clean:
@@ -308,7 +308,8 @@ app.layout = html.Div([
                                         {'label': 'Conductivity(us/cm)', 'value': 'Conductivity(us/cm)'},
                                         {'label': 'Phosphorus', 'value': 'Phosphorus'},
                                         {'label': 'Ecoli (MPN/100mL)', 'value': 'Ecoli (MPN/100mL)'},
-                                        {'label': 'Enterococcus', 'value': 'Enterococcus'}
+                                        {'label': 'Enterococcus', 'value': 'Enterococcus'},
+                                        {'label': 'HF183 (MPN/100mL)', 'value': 'HF183 (MPN/100mL)'}
                                     ],
                                     value='Ecoli (MPN/100mL)',
                                     style={'width': '98%', 'margin-left': '5px'}
@@ -617,6 +618,12 @@ color_mapping = {
         'ranges': [0, 300, 400, 500],
         'ranges_descr': ['No Data', '0-300', '300-400', '400-500', 'Enterococcus > 500'],
         'colors': 'BuPu',
+        'palette': 'sequential'
+    },
+    'HF183 (MPN/100mL)': {
+        'ranges': [0, 15, 20, 25],
+        'ranges_descr': ['No Data', '0-15 Below Detection Limit', '15-20 Low', '20-25 High', '>25 Very High'],
+        'colors': 'PuRd',
         'palette': 'sequential'
     }
 }

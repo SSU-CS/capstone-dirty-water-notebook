@@ -779,7 +779,7 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
         f"Conductivity(us/cm): {row['Conductivity(us/cm)'] if row['Conductivity(us/cm)'] != -1 else no_data_indicator}<br>"
         f"Phosphorus: {row['Phosphorus'] if row['Phosphorus'] != -1 else no_data_indicator}<br>"
         f"Ecoli (MPN/100mL): {row['Ecoli (MPN/100mL)'] if row['Ecoli (MPN/100mL)'] != -1 else no_data_indicator}<br>"
-        f"Enterococcus: {row['Enterococcus'] if row['Enterococcus'] != -1 else no_data_indicator}<br>",
+        f"Enterococcus: {row['Enterococcus'] if row['Enterococcus'] != -1 else no_data_indicator}<br>"
         f"HF183 (MPN/100mL): {row['HF183 (MPN/100mL)'] if row['HF183 (MPN/100mL)'] != -1 else no_data_indicator}<br>"),                                                    
     axis=1)
 

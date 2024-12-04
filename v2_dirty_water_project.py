@@ -512,7 +512,7 @@ def update_sample_date_graphs(selected_date_index):
     filtered_df = merged[merged['date'] == sample_date]
 
     # Create a subplot grid with shared x-axis
-    fig = make_subplots(rows=6, cols=1, shared_xaxes=True,
+    fig = make_subplots(rows=8, cols=1, shared_xaxes=True,
                         subplot_titles=("Ecoli (MPN/100mL)", "pH", "Phosphorus",
                                         "Conductivity(us/cm)", "DO(mg/L)", "D.O%", "Enterococcus", "HF183 (MPN/100mL)"))
 

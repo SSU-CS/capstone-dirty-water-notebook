@@ -549,7 +549,7 @@ def update_sample_date_graphs(selected_date_index):
         fig.update_yaxes(title_text=title, title_font=dict(size=10), title_standoff=5, row=i, col=1)
         fig.update_xaxes(title_text="Longitude", showticklabels=True, row=i, col=1)
 
-    fig.update_layout(height=1200, width=280, margin=dict(t=20, l=5, r=5), showlegend=False)
+    fig.update_layout(height=1600, width=280, margin=dict(t=20, l=5, r=5), showlegend=False)
 
     return fig, f"Data Collected on {sample_date.strftime('%Y-%m-%d')}"
 

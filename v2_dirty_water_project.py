@@ -525,7 +525,7 @@ def update_sample_date_graphs(selected_date_index):
         ("DO(mg/L)", "DO"),
         ("D.O%", "D.O%"),
         ('Enterococcus', 'Enterococcus'),
-        ("HF183 (MPN/100mL", "HF183 (MPN/100mL)")
+        ("HF183 (MPN/100mL)", "HF183 (MPN/100mL)")
     ]
   
 

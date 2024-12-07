@@ -90,21 +90,23 @@ combined_gdf = gpd.GeoDataFrame(pd.concat([srcreek_gdf, colgancreek_gdf], ignore
 
 os.makedirs('assets', exist_ok = True)
 
+async def download_batch(file_list):
+    for file in file_list:
+        file_name = file['file_name']
+        file_id = file['file_id']
+        output_path = f'assets/site_image_{file_name}'
+        await asyncio.to_thread(download_file, file_id, output_path)
+        await asyncio.sleep(5)
+        
 async def download_images():
-    for i, file in rain_gauge_list.iterrows():
-        file_name = file['file_name']
-        file_id = file['file_id']
-        output_rain_figures = f'assets/rain_figure_{file_name}'
-        # download_file(file_id, output_rain_figures)
-        await asyncio.to_thread(download_file, file_id, output_rain_figures)
-        await asyncio.sleep(5)
-    for i, file in site_image_list.iterrows():
-        file_name = file['file_name']
-        file_id = file['file_id']
-        output_site_images = f'assets/site_image_{file_name}'
-        # download_file(file_id, output_site_images)
-        await asyncio.to_thread(download_file, file_id, output_site_images)
-        await asyncio.sleep(5)
+    for i in range(0, len(rain_gauge_list), 5):  # Batch size of 5
+        batch = rain_gauge_list.iloc[i:i+5]
+        await download_batch(batch)
+        await asyncio.sleep(60)
+    for i in range(0, len(site_image_list), 10):
+        batch = site_image_list.iloc[i:i+10]
+        await download_batch(batch)
+        await asyncio.sleep(60)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries

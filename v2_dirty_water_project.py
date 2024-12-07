@@ -89,14 +89,14 @@ async def download_images():
         output_rain_figures = f'assets/rain_figure_{file_name}'
         # download_file(file_id, output_rain_figures)
         await asyncio.to_thread(download_file, file_id, output_rain_figures)
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
     for i, file in site_image_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
         output_site_images = f'assets/site_image_{file_name}'
         # download_file(file_id, output_site_images)
         await asyncio.to_thread(download_file, file_id, output_site_images)
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries
@@ -305,6 +305,7 @@ app.layout = html.Div([
                                         {'label': 'pH', 'value': 'pH'},
                                         {'label': 'TEMP', 'value': 'TEMP'},
                                         {'label': 'DO(mg/L)', 'value': 'DO(mg/L)'},
+                                        {'label': 'D.O%', 'value': 'D.O%'},
                                         {'label': 'Conductivity(us/cm)', 'value': 'Conductivity(us/cm)'},
                                         {'label': 'Phosphorus', 'value': 'Phosphorus'},
                                         {'label': 'Ecoli (MPN/100mL)', 'value': 'Ecoli (MPN/100mL)'},
@@ -522,7 +523,7 @@ def update_sample_date_graphs(selected_date_index):
         ("pH", "pH"),
         ("Phosphorus", "Phosphorus"),
         ("Conductivity(us/cm)", "Conductivity(us/cm)"),
-        ("DO(mg/L)", "DO"),
+        ("DO(mg/L)", "DO(mg/L)"),
         ("D.O%", "D.O%"),
         ('Enterococcus', 'Enterococcus'),
         ("HF183 (MPN/100mL)", "HF183 (MPN/100mL)")

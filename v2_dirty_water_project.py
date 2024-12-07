@@ -80,6 +80,14 @@ output_geojson = '/tmp/SantaRosaCreek.geojson'
 download_file(file_id, output_geojson)
 srcreek_gdf = gpd.read_file(output_geojson)
 
+# Download Colgan Creek GeoJSON
+file_id = '1tTPXprYXgpciPQvISe6NEFIZ0Vp0FVg3'  # Google Drive file ID
+output_geojson = '/tmp/ColganCreek.geojson'
+download_file(file_id, output_geojson)
+colgancreek_gdf = gpd.read_file(output_geojson)
+
+combined_gdf = gpd.GeoDataFrame(pd.concat([srcreek_gdf, colgancreek_gdf], ignore_index=True))
+
 os.makedirs('assets', exist_ok = True)
 
 async def download_images():
@@ -89,14 +97,14 @@ async def download_images():
         output_rain_figures = f'assets/rain_figure_{file_name}'
         # download_file(file_id, output_rain_figures)
         await asyncio.to_thread(download_file, file_id, output_rain_figures)
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
     for i, file in site_image_list.iterrows():
         file_name = file['file_name']
         file_id = file['file_id']
         output_site_images = f'assets/site_image_{file_name}'
         # download_file(file_id, output_site_images)
         await asyncio.to_thread(download_file, file_id, output_site_images)
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries
@@ -815,7 +823,7 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
     lines = []
 
     # Extract coordinates for LineStrings
-    for geom in srcreek_gdf.geometry:
+    for geom in combined_gdf.geometry:
         if geom.geom_type == 'LineString' and not geom.is_empty:
             x, y = geom.xy
             # Ensure x and y are lists of longitudes and latitudes

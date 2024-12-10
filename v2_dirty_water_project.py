@@ -216,8 +216,14 @@ rain_figures = {}
 
 generate_rain_figures()
 
-# download_images()
-asyncio.run(download_images())
+# Background task runner
+def start_background_tasks(loop):
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(download_images())
+
+# Start the background task
+loop = asyncio.new_event_loop()
+threading.Thread(target=start_background_tasks, args=(loop,), daemon=True).start()
 
 # Create a Dash app
 app = dash.Dash(__name__)

@@ -109,8 +109,8 @@ async def download_batch(file_list, type):
             except Exception as e:
                 retries += 1
                 if retries < max_retries:
-                    wait_time = 40 ** retries  # Exponential backoff
-                    print(f"Retrying {ouput_path} in {wait_time} seconds...")
+                    wait_time = 40 * retries 
+                    print(f"Retrying {output_path} in {wait_time} seconds...")
                     await asyncio.sleep(wait_time)
         
 async def download_images():

@@ -638,7 +638,7 @@ color_mapping = {
     },
     'HF183 (MPN/100mL)': {
         'ranges': [0, 15, 20, 25],
-        'ranges_descr': ['No Data', '0-15 Below Detection Limit', '15-20 Low', '20-25 High', '>25 Very High'],
+        'ranges_descr': ['No Data', '0-15 Extremely Low', '15-20 Low', '20-25 High', '>25 Very High'],
         'colors': 'PuRd',
         'palette': 'sequential'
     }

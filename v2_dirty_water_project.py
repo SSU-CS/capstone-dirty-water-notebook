@@ -105,14 +105,14 @@ async def download_batch(file_list, type):
                     output_path = f'assets/rain_figure_{file_name}'
                 await asyncio.to_thread(download_file, file_id, output_path)
             except Exception as e:
-            retries += 1
-            if retries < max_retries:
-                wait_time = 40 ** retries  # Exponential backoff
-                print(f"Retrying {destination} in {wait_time} seconds...")
-                await asyncio.sleep(wait_time)
+                retries += 1
+                if retries < max_retries:
+                    wait_time = 40 ** retries  # Exponential backoff
+                    print(f"Retrying {destination} in {wait_time} seconds...")
+                    await asyncio.sleep(wait_time)
         
 async def download_images():
-    for i in range(0, len(rain_gauge_list), 5):  # Batch size of 5
+    for i in range(0, len(rain_gauge_list), 3):  # Batch size of 5
         batch = rain_gauge_list.iloc[i:i+5].copy()
         await download_batch(batch, 'rain')
         await asyncio.sleep(60)

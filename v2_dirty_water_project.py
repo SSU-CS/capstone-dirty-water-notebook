@@ -94,8 +94,8 @@ os.makedirs('assets', exist_ok = True)
 
 async def download_batch(file_list, type):
     max_retries = 10
-    retries = 0
     for _, file in file_list.iterrows():
+        retries = 0
         await asyncio.sleep(random.randint(1,4))
         while retries < max_retries:
             try:

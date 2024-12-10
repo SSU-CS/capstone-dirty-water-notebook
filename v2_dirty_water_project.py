@@ -91,12 +91,15 @@ combined_gdf = gpd.GeoDataFrame(pd.concat([srcreek_gdf, colgancreek_gdf], ignore
 
 os.makedirs('assets', exist_ok = True)
 
-async def download_batch(file_list):
+async def download_batch(file_list, type):
     for _, file in file_list.iterrows():
         try:
             file_name = file['file_name']
             file_id = file['file_id']
-            output_path = f'assets/site_image_{file_name}'
+            if type == 'site':
+                output_path = f'assets/site_image_{file_name}'
+            else:
+                output_path = f'assets/rain_figure_{file_name}'
             await asyncio.to_thread(download_file, file_id, output_path)
         except Exception as e:
             print(f"Error downloading {file_name}: {e}")
@@ -104,11 +107,11 @@ async def download_batch(file_list):
 async def download_images():
     for i in range(0, len(rain_gauge_list), 5):  # Batch size of 5
         batch = rain_gauge_list.iloc[i:i+5].copy()
-        await download_batch(batch)
+        await download_batch(batch, 'rain')
         await asyncio.sleep(60)
     for i in range(0, len(site_image_list), 10):
         batch = site_image_list.iloc[i:i+10].copy()
-        await download_batch(batch)
+        await download_batch(batch, 'site')
         await asyncio.sleep(60)
 
 def dms_to_dd(dms):

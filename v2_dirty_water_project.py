@@ -32,6 +32,7 @@ import piexif
 import exifread
 from datetime import datetime
 import asyncio
+import random
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from flask import send_from_directory
@@ -95,6 +96,7 @@ async def download_batch(file_list, type):
     max_retries = 10
     retries = 0
     for _, file in file_list.iterrows():
+        await asyncio.sleep(random.randint(1,4))
         while retries < max_retries:
             try:
                 file_name = file['file_name']
@@ -108,10 +110,11 @@ async def download_batch(file_list, type):
                 retries += 1
                 if retries < max_retries:
                     wait_time = 40 ** retries  # Exponential backoff
-                    print(f"Retrying {destination} in {wait_time} seconds...")
+                    print(f"Retrying {ouput_path} in {wait_time} seconds...")
                     await asyncio.sleep(wait_time)
         
 async def download_images():
+    await asyncio.sleep(random.randint(2,8))
     for i in range(0, len(rain_gauge_list), 3):  # Batch size of 5
         batch = rain_gauge_list.iloc[i:i+5].copy()
         await download_batch(batch, 'rain')

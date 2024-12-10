@@ -103,11 +103,11 @@ async def download_batch(file_list):
         
 async def download_images():
     for i in range(0, len(rain_gauge_list), 5):  # Batch size of 5
-        batch = rain_gauge_list.iloc[i:i+5]
+        batch = rain_gauge_list.iloc[i:i+5].copy()
         await download_batch(batch)
         await asyncio.sleep(60)
     for i in range(0, len(site_image_list), 10):
-        batch = site_image_list.iloc[i:i+10]
+        batch = site_image_list.iloc[i:i+10].copy()
         await download_batch(batch)
         await asyncio.sleep(60)
 

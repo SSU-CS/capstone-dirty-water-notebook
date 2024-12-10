@@ -106,6 +106,7 @@ async def download_batch(file_list, type):
                 else:
                     output_path = f'assets/rain_figure_{file_name}'
                 await asyncio.to_thread(download_file, file_id, output_path)
+                break
             except Exception as e:
                 retries += 1
                 if retries < max_retries:

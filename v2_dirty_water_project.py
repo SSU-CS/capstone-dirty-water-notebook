@@ -588,8 +588,11 @@ def update_sample_date_graphs(selected_date_index):
         autosize=True,
         margin=dict(t=20, l=5, r=5),
         showlegend=False,
-        aspectmode="manual",  # Enforce a fixed aspect ratio
-        aspectratio=dict(x=7, y=40)  # Matches the original 40:7 ratio
+        yaxis=dict(
+            scaleanchor=None
+        ),
+        aspectmode="manual",  # Enforces a fixed aspect ratio
+        aspectratio=dict(x=7, y=40)  # Use your original 40:7 ratio
     )
 
     return fig, f"Data Collected on {sample_date.strftime('%Y-%m-%d')}"

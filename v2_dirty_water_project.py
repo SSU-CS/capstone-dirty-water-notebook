@@ -585,13 +585,11 @@ def update_sample_date_graphs(selected_date_index):
         fig.update_xaxes(title_text="Longitude", showticklabels=True, row=i, col=1)
 
     fig.update_layout(
-    autosize=True,
-    margin=dict(t=20, l=5, r=5),
-    showlegend=False,
-    xaxis=dict(
-        scaleanchor="y"  # Links the x-axis and y-axis to maintain ratio
-    ),
-    aspectratio=dict(x=7, y=40)  # Original ratio: 40:7
+        autosize=True,
+        margin=dict(t=20, l=5, r=5),
+        showlegend=False,
+        aspectmode="manual",  # Enforce a fixed aspect ratio
+        aspectratio=dict(x=7, y=40)  # Matches the original 40:7 ratio
     )
 
     return fig, f"Data Collected on {sample_date.strftime('%Y-%m-%d')}"

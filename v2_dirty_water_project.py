@@ -389,11 +389,13 @@ app.layout = html.Div([
                               children=['⬅ Water Flow Direction'],
                               style={
                                 'padding': '0px',
-                                'fontSize': '10px',
+                                'fontSize': '14px',
                                 'color': 'darkblue',
                                 'textAlign': 'center',
                                 'fontFamily': 'Helvetica'
                             }),
+                            html.Div(id="graph-tab-container",
+                            children=[
                             dcc.Graph(
                                 id='sample-date-graphs',
                                 config={
@@ -407,10 +409,17 @@ app.layout = html.Div([
                                     'display': 'block',
                                     'padding': '0',
                                     'margin': '0',
-                                    'height': '474px',
-                                    'overflowY': 'auto'
                                 }
                             )
+                            ],
+                                style={
+                                    'width': '100%',
+                                    'display': 'block',
+                                    'padding': '0',
+                                    'margin': '0',
+                                    'height': '474px',
+                                    'overflowY': 'auto'
+                                }      )                      
                         ],
                         style={
                             'fontSize': '12px',
@@ -584,16 +593,15 @@ def update_sample_date_graphs(selected_date_index):
         fig.update_yaxes(title_text=title, title_font=dict(size=10), title_standoff=5, row=i, col=1)
         fig.update_xaxes(title_text="Longitude", showticklabels=True, row=i, col=1)
 
+    graph_height = len(variables)*280
     fig.update_layout(
-        autosize=True,
-        margin=dict(t=20, l=5, r=5),
-        showlegend=False,
-        yaxis=dict(
-            scaleanchor=None
-        ),
-        aspectmode="manual",  # Enforces a fixed aspect ratio
-        aspectratio=dict(x=7, y=40)  # Use your original 40:7 ratio
-    )
+    height=graph_height,
+    autosize=True,
+    margin=dict(t=20, l=5, r=5),
+    showlegend=False,
+    xaxis=dict(
+        scaleanchor="y"
+    ))
 
     return fig, f"Data Collected on {sample_date.strftime('%Y-%m-%d')}"
 

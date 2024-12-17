@@ -32,9 +32,11 @@ import piexif
 import exifread
 from datetime import datetime
 import asyncio
+import random
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from flask import send_from_directory
+import threading
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -80,23 +82,48 @@ output_geojson = '/tmp/SantaRosaCreek.geojson'
 download_file(file_id, output_geojson)
 srcreek_gdf = gpd.read_file(output_geojson)
 
+# Download Colgan Creek GeoJSON
+file_id = '1tTPXprYXgpciPQvISe6NEFIZ0Vp0FVg3'  # Google Drive file ID
+output_geojson = '/tmp/ColganCreek.geojson'
+download_file(file_id, output_geojson)
+colgancreek_gdf = gpd.read_file(output_geojson)
+
+combined_gdf = gpd.GeoDataFrame(pd.concat([srcreek_gdf, colgancreek_gdf], ignore_index=True))
+
 os.makedirs('assets', exist_ok = True)
 
+async def download_batch(file_list, type):
+    max_retries = 10
+    for _, file in file_list.iterrows():
+        retries = 0
+        await asyncio.sleep(random.randint(1,4))
+        while retries < max_retries:
+            try:
+                file_name = file['file_name']
+                file_id = file['file_id']
+                if type == 'site':
+                    output_path = f'assets/site_image_{file_name}'
+                else:
+                    output_path = f'assets/rain_figure_{file_name}'
+                await asyncio.to_thread(download_file, file_id, output_path)
+                break
+            except Exception as e:
+                retries += 1
+                if retries < max_retries:
+                    wait_time = 40 * retries 
+                    print(f"Retrying {output_path} in {wait_time} seconds...")
+                    await asyncio.sleep(wait_time)
+        
 async def download_images():
-    for i, file in rain_gauge_list.iterrows():
-        file_name = file['file_name']
-        file_id = file['file_id']
-        output_rain_figures = f'assets/rain_figure_{file_name}'
-        # download_file(file_id, output_rain_figures)
-        await asyncio.to_thread(download_file, file_id, output_rain_figures)
-        await asyncio.sleep(1)
-    for i, file in site_image_list.iterrows():
-        file_name = file['file_name']
-        file_id = file['file_id']
-        output_site_images = f'assets/site_image_{file_name}'
-        # download_file(file_id, output_site_images)
-        await asyncio.to_thread(download_file, file_id, output_site_images)
-        await asyncio.sleep(1)
+    await asyncio.sleep(random.randint(2,8))
+    for i in range(0, len(rain_gauge_list), 3):  # Batch size of 5
+        batch = rain_gauge_list.iloc[i:i+5].copy()
+        await download_batch(batch, 'rain')
+        await asyncio.sleep(60)
+    for i in range(0, len(site_image_list), 5):
+        batch = site_image_list.iloc[i:i+10].copy()
+        await download_batch(batch, 'site')
+        await asyncio.sleep(60)
 
 def dms_to_dd(dms):
     try:  # Accounting for multiple styles of coordinate entries
@@ -204,11 +231,18 @@ rain_figures = {}
 
 generate_rain_figures()
 
+# Background task runner
+def start_background_tasks(loop):
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(download_images())
+
+# Start the background task
+loop = asyncio.new_event_loop()
+threading.Thread(target=start_background_tasks, args=(loop,), daemon=True).start()
+
 # Create a Dash app
 app = dash.Dash(__name__)
 server = app.server
-# download_images()
-asyncio.run(download_images())
 
 color_dict = {
     0: 'rgba(255, 255, 255, .5)',  # No homeless
@@ -305,6 +339,7 @@ app.layout = html.Div([
                                         {'label': 'pH', 'value': 'pH'},
                                         {'label': 'TEMP', 'value': 'TEMP'},
                                         {'label': 'DO(mg/L)', 'value': 'DO(mg/L)'},
+                                        {'label': 'D.O%', 'value': 'D.O%'},
                                         {'label': 'Conductivity(us/cm)', 'value': 'Conductivity(us/cm)'},
                                         {'label': 'Phosphorus', 'value': 'Phosphorus'},
                                         {'label': 'Ecoli (MPN/100mL)', 'value': 'Ecoli (MPN/100mL)'},
@@ -354,11 +389,13 @@ app.layout = html.Div([
                               children=['⬅ Water Flow Direction'],
                               style={
                                 'padding': '0px',
-                                'fontSize': '10px',
+                                'fontSize': '14px',
                                 'color': 'darkblue',
                                 'textAlign': 'center',
                                 'fontFamily': 'Helvetica'
                             }),
+                            html.Div(id="graph-tab-container",
+                            children=[
                             dcc.Graph(
                                 id='sample-date-graphs',
                                 config={
@@ -372,10 +409,17 @@ app.layout = html.Div([
                                     'display': 'block',
                                     'padding': '0',
                                     'margin': '0',
-                                    'height': '474px',
-                                    'overflowY': 'auto'
                                 }
                             )
+                            ],
+                                style={
+                                    'width': '100%',
+                                    'display': 'block',
+                                    'padding': '0',
+                                    'margin': '0',
+                                    'height': '474px',
+                                    'overflowY': 'auto'
+                                }      )                      
                         ],
                         style={
                             'fontSize': '12px',
@@ -522,7 +566,7 @@ def update_sample_date_graphs(selected_date_index):
         ("pH", "pH"),
         ("Phosphorus", "Phosphorus"),
         ("Conductivity(us/cm)", "Conductivity(us/cm)"),
-        ("DO(mg/L)", "DO"),
+        ("DO(mg/L)", "DO(mg/L)"),
         ("D.O%", "D.O%"),
         ('Enterococcus', 'Enterococcus'),
         ("HF183 (MPN/100mL)", "HF183 (MPN/100mL)")
@@ -549,7 +593,15 @@ def update_sample_date_graphs(selected_date_index):
         fig.update_yaxes(title_text=title, title_font=dict(size=10), title_standoff=5, row=i, col=1)
         fig.update_xaxes(title_text="Longitude", showticklabels=True, row=i, col=1)
 
-    fig.update_layout(height=1600, width=280, margin=dict(t=20, l=5, r=5), showlegend=False)
+    graph_height = len(variables)*280
+    fig.update_layout(
+    height=graph_height,
+    autosize=True,
+    margin=dict(t=20, l=5, r=5),
+    showlegend=False,
+    xaxis=dict(
+        scaleanchor="y"
+    ))
 
     return fig, f"Data Collected on {sample_date.strftime('%Y-%m-%d')}"
 
@@ -625,7 +677,7 @@ color_mapping = {
     },
     'HF183 (MPN/100mL)': {
         'ranges': [0, 15, 20, 25],
-        'ranges_descr': ['No Data', '0-15 Below Detection Limit', '15-20 Low', '20-25 High', '>25 Very High'],
+        'ranges_descr': ['No Data', '0-15 Extremely Low', '15-20 Low', '20-25 High', '>25 Very High'],
         'colors': 'PuRd',
         'palette': 'sequential'
     }
@@ -814,7 +866,7 @@ def update_map(selected_date_index, color_value, relayout_data, lat_lon, current
     lines = []
 
     # Extract coordinates for LineStrings
-    for geom in srcreek_gdf.geometry:
+    for geom in combined_gdf.geometry:
         if geom.geom_type == 'LineString' and not geom.is_empty:
             x, y = geom.xy
             # Ensure x and y are lists of longitudes and latitudes
